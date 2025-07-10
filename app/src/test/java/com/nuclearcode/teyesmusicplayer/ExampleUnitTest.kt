@@ -1,4 +1,4 @@
-package com.example.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer
 
 import org.junit.Test
 

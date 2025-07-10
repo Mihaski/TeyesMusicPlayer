@@ -1,4 +1,4 @@
-package com.example.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer
 
 import android.content.Context
 import android.media.MediaPlayer

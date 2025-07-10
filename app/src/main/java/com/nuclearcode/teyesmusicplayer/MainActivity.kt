@@ -1,10 +1,9 @@
-package com.example.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer
 
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,7 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.teyesmusicplayer.ui.theme.TeyesMusicPlayerTheme
+import com.nuclearcode.teyesmusicplayer.ui.theme.TeyesMusicPlayerTheme
 
 class MainActivity : ComponentActivity() {
 

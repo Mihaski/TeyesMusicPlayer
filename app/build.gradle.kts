@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.teyesmusicplayer"
+    namespace = "com.nuclearcode.teyesmusicplayer"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.teyesmusicplayer"
+        applicationId = "com.nuclearcode.teyesmusicplayer"
         minSdk = 24
         targetSdk = 35
         versionCode = 1

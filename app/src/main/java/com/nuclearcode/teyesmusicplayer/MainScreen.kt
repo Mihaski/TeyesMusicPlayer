@@ -1,4 +1,4 @@
-package com.example.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer
 
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -62,7 +62,7 @@ fun MainView(
 
         LazyColumn(
             modifier = Modifier
-                .weight(0.9f)
+                .weight(1f)
                 .background(Color.Red)
         ) {
             items(tracks) { track ->

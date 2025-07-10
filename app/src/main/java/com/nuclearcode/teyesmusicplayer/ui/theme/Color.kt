@@ -1,4 +1,4 @@
-package com.example.teyesmusicplayer.ui.theme
+package com.nuclearcode.teyesmusicplayer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
