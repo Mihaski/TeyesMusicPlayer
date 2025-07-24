@@ -1,74 +1,131 @@
 package com.nuclearcode.teyesmusicplayer
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.positionChange
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import kotlin.math.roundToInt
 
+@Composable
 @Preview
+fun AlignedSliderPreview() {
+    var progress by remember { mutableLongStateOf(30L) }
+
+    AlignedSlider(
+        progress = progress,
+        duration = 100,
+        onSeek = { new -> progress = new }
+    )
+}
+
 @Composable
 fun AlignedSlider(
-    progress: Float = 0f,
-    duration: Float = 0f,
-    onSeek: (Float) -> Unit = {},
+    progress: Long,
+    duration: Long,
+    onSeek: (Long) -> Unit
 ) {
     val thumbRadius = 6.dp
     val trackHeight = 2.dp
 
+    var sliderWidth by remember { mutableIntStateOf(1) }
+    var isDragging by remember { mutableStateOf(false) }
+    var dragPos by remember { mutableFloatStateOf(0f) }
+
+    // Вычисляем позицию для прогресса
+    val targetPos = if (duration > 0 && sliderWidth > 0) {
+        (progress.toFloat() / duration.toFloat()) * sliderWidth
+    } else 0f
+
+    // Используем анимацию только если не перетаскиеваем, иначе мгновенно меняем позицию
+    val sliderPos = if (isDragging) {
+        dragPos
+    } else {
+        animateFloatAsState(
+            targetValue = targetPos,
+            animationSpec = tween(durationMillis = 300)
+        ).value
+    }
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(thumbRadius * 2)// высота под thumb
+            .height(thumbRadius * 2)
+            .onGloballyPositioned {
+                sliderWidth = it.size.width
+            }
+            .pointerInput(duration) {
+                detectTapGestures { offset ->
+                    val x = offset.x.coerceIn(0f, sliderWidth.toFloat())
+                    onSeek(((x / sliderWidth) * duration).toLong().coerceIn(0L, duration))
+                }
+            }
+            .pointerInput(duration) {
+                detectDragGestures(
+                    onDragStart = { offset ->
+                        isDragging = true
+                        dragPos = offset.x.coerceIn(0f, sliderWidth.toFloat())
+                    },
+                    onDrag = { change, _ ->
+                        dragPos += change.positionChange().x
+                        dragPos = dragPos.coerceIn(0f, sliderWidth.toFloat())
+                        onSeek(((dragPos / sliderWidth) * duration).toLong().coerceIn(0L, duration))
+                    },
+                    onDragEnd = {
+                        isDragging = false
+                        onSeek(((dragPos / sliderWidth) * duration).toLong().coerceIn(0L, duration))
+                    },
+                    onDragCancel = {
+                        isDragging = false
+                    }
+                )
+            }
     ) {
-        // Track (полоса)
+        // Track
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .fillMaxWidth()
                 .height(trackHeight)
-                .background(Color.Gray, RoundedCornerShape(1.dp))
+                .background(Color.Black.copy(alpha = 0.3f), RoundedCornerShape(1.dp))
         )
 
-        // Thumb (ползунок)
-        val positionFraction = if (duration == 0f) 0f else progress / duration
-
+        // Thumb
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .offset(x = with(LocalDensity.current) {
-                    (positionFraction * (LocalConfiguration.current.screenWidthDp.dp.toPx())).toDp()
-                } - thumbRadius)
+                .offset {
+                    IntOffset(
+                        x = sliderPos.roundToInt() - thumbRadius.roundToPx(),
+                        y = 0
+                    )
+                }
                 .size(thumbRadius * 2)
-                .background(Color.White, shape = CircleShape)
-        )
-
-        Slider(
-            value = progress,
-            onValueChange = { onSeek(it) },
-            valueRange = 0f..duration,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(36.dp).padding(top = 30.dp), // регулируй под нужное
-            colors = SliderDefaults.colors(
-                thumbColor = Color.White,
-                activeTrackColor = Color.White,
-                inactiveTrackColor = Color.Gray
-            )
+                .background(Color.Black, shape = CircleShape)
         )
     }
 }

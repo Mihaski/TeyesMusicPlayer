@@ -13,21 +13,42 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
+import com.nuclearcode.teyesmusicplayer.di.DaggerMainActivityComponent
+import com.nuclearcode.teyesmusicplayer.di.ModuleCore
 import com.nuclearcode.teyesmusicplayer.ui.theme.TeyesMusicPlayerTheme
+import javax.inject.Inject
+import kotlin.getValue
 
 class MainActivity : ComponentActivity() {
 
+    @Inject
+    lateinit var viewModelFactory: AudioPlayerViewModelFactory
+
+    private val component by lazy {
+        DaggerMainActivityComponent.builder()
+            .moduleCore(ModuleCore(this.application))
+            .build()
+    }
+    private val viewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[AudioPlayerViewModel::class.java]
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        component.injectMainActivity(this)
         requestPermissionIfNeeded()
 
         enableEdgeToEdge()
         setContent {
             TeyesMusicPlayerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    MainScreen(modifier = Modifier.padding(innerPadding))
+//                    val tracks by viewModel.audioFiles.collectAsState() //todo вытащить все действия и данные к сюда чтобы не передавать всю вьюмодель
+
+                    AudioListScreen(
+                        modifier = Modifier.padding(innerPadding), viewModel
+                    )
+
                 }
             }
         }

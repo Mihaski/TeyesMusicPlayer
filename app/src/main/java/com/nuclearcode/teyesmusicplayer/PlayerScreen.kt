@@ -1,8 +1,8 @@
 package com.nuclearcode.teyesmusicplayer
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,31 +18,33 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nuclearcode.teyesmusicplayer.ui.theme.PurpleGrey40
+import com.nuclearcode.teyesmusicplayer.ui.theme.PurpleGrey80
 
 @Preview
 @Composable
-fun PlayerPreview() {
+private fun PlayerPreview() {
     PlayerScreen(
-        track = null,
         progress = 0,
         duration = 0,
         isPlaying = false,
@@ -54,11 +56,12 @@ fun PlayerPreview() {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlayerScreen(
     modifier: Modifier = Modifier,
-    track: AudioFile?,
+    title: String = "Cause: don't passing parameter",
+    artist: String = "Cause: don't passing parameter",
+    byteArrayCover: ByteArray? = null,
     progress: Long,
     duration: Long,
     isPlaying: Boolean,
@@ -68,35 +71,55 @@ fun PlayerScreen(
     onSeek: (Long) -> Unit,
     onLike: () -> Unit,
 ) {
+
+    val safeDuration = duration.takeIf { it > 0 } ?: 1L
+    val safeProgress = progress.coerceIn(0L, safeDuration)
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFF70AEE3)) // фон как на скрине
-            .padding(16.dp),
+            .then(
+                if (byteArrayCover == null) Modifier.background(PurpleGrey40)
+                else Modifier.background(PurpleGrey80)
+            )
+            .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(Modifier.height(16.dp))
 
-        // Обложка (временно иконка)
-        Image(
-            painter = painterResource(id = R.drawable.teyes_banner_1024x1024),
-            contentDescription = null,
-            modifier = Modifier
-                .size(250.dp)
-                .clip(RoundedCornerShape(16.dp)),
-            contentScale = ContentScale.Crop
-        )
+        // Обложка
+        if (byteArrayCover != null) {
+            Image(
+                bitmap = BitmapFactory.decodeByteArray(
+                    byteArrayCover,
+                    0,
+                    byteArrayCover.size
+                ).asImageBitmap(),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(35.dp))
+            )
+        } else {
+            Image(
+                painter = painterResource(R.drawable.teyes_banner_1024x1024),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(35.dp))
+            )
+        }
 
         Spacer(Modifier.height(24.dp))
 
         // Название трека и исполнитель
         Text(
-            text = track?.title ?: "Неизвестный title",
+            text = title,
             style = MaterialTheme.typography.titleLarge,
             color = Color.White
         )
         Text(
-            text = track?.artist ?: "Неизвестный исполнитель",
+            text = artist,
             style = MaterialTheme.typography.bodyMedium,
             color = Color.White.copy(alpha = 0.7f)
         )
@@ -104,45 +127,40 @@ fun PlayerScreen(
         Spacer(Modifier.height(16.dp))
 
         // Прогресс
-        Slider(
-            value = progress.toFloat(),
-            onValueChange = { onSeek(it.toLong()) },
-            valueRange = 0f..duration.toFloat(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(28.dp), // выше для касаний
-            colors = SliderDefaults.colors(
-                thumbColor = Color.White,
-                activeTrackColor = Color.White,
-                inactiveTrackColor = Color.White.copy(alpha = 0.3f)
-            ),
-            thumb = {
-                SliderDefaults.Thumb(
-                    interactionSource = remember { MutableInteractionSource() },
-                    modifier = Modifier.size(10.dp)
+        var internalProgress by remember {
+            mutableLongStateOf(
+                progress.coerceIn(
+                    0L,
+                    duration.coerceAtLeast(1L)
                 )
-            },
-            track = { sliderState ->
-                SliderDefaults.Track(
-                    sliderState = sliderState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(2.dp), // вот тут толщина трека
-                    colors = SliderDefaults.colors(
-                        activeTrackColor = Color.White,
-                        inactiveTrackColor = Color.White.copy(alpha = 0.3f)
-                    ),
-                    enabled = true
-                )
+            )
+        }
+        LaunchedEffect(progress) {
+            if (internalProgress != progress) {
+                internalProgress = progress
             }
-        )
+        }
+        AlignedSlider(internalProgress, safeDuration) { new ->
+            internalProgress = new
+            onSeek(new)
+        }
 
         Row(
-            Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("${progress / 1000}s", color = Color.White)
-            Text("${duration / 1000}s", color = Color.White)
+            Text(
+                text = formatTime(safeProgress),
+                color = Color.White,
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = formatTime(safeDuration),
+                color = Color.White,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
 
         Spacer(Modifier.height(24.dp))
@@ -171,7 +189,9 @@ fun PlayerScreen(
 
             IconButton(onClick = onPlayPause) {
                 Icon(
-                    if (isPlaying) ImageVector.vectorResource(R.drawable.round_pause_24)
+                    if (isPlaying) ImageVector.vectorResource(
+                        R.drawable.round_pause_24
+                    )
                     else Icons.Default.PlayArrow,
                     contentDescription = null,
                     modifier = Modifier.size(48.dp),

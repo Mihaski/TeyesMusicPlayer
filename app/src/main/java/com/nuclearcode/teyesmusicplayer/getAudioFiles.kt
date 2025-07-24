@@ -1,6 +1,7 @@
 package com.nuclearcode.teyesmusicplayer
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 
 fun getAudioFiles(context: Context): List<AudioFile> {
@@ -12,36 +13,54 @@ fun getAudioFiles(context: Context): List<AudioFile> {
         MediaStore.Audio.Media.TITLE,
         MediaStore.Audio.Media.ARTIST,
         MediaStore.Audio.Media.DATA,
-        MediaStore.Audio.Media.DURATION
+        MediaStore.Audio.Media.DURATION,
+        MediaStore.Audio.Media.ALBUM_ID
     )
 
     val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
-
     val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
 
-    val cursor = context.contentResolver.query(
-        collection,
-        projection,
-        selection,
-        null,
-        sortOrder
-    )
+    context.contentResolver.query(
+        collection, projection, selection, null, sortOrder
+    )?.use { cursor ->
+        val titleColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
+        val artistColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
+        val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+        val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+        val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
-    cursor?.use {
-        val titleColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
-        val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
-        val pathColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-        val durationColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
+        while (cursor.moveToNext()) {
+            val title = cursor.getString(titleColumn)
+            val artist = cursor.getString(artistColumn)
+            val path = cursor.getString(pathColumn)
+            val duration = cursor.getLong(durationColumn)
+            val albumId = cursor.getLong(albumIdColumn)
 
-        while (it.moveToNext()) {
-            val title = it.getString(titleColumn)
-            val artist = it.getString(artistColumn)
-            val path = it.getString(pathColumn)
-            val duration = it.getLong(durationColumn)
+            val embeddedArt = getEmbeddedArtwork(path)
 
-            audioList.add(AudioFile(title, artist, path, duration))
+            audioList.add(
+                AudioFile(
+                    title = title,
+                    artist = artist,
+                    path = path,
+                    duration = duration,
+                    albumId = albumId,
+                    embeddedArt = embeddedArt
+                )
+            )
         }
     }
 
     return audioList
+}
+fun getEmbeddedArtwork(path: String): ByteArray? {
+    val retriever = MediaMetadataRetriever()
+    return try {
+        retriever.setDataSource(path)
+        retriever.embeddedPicture
+    } catch (_: Exception) {
+        null
+    } finally {
+        retriever.release()
+    }
 }
