@@ -1,6 +1,7 @@
 package com.nuclearcode.teyesmusicplayer
 
 data class AudioFile(
+    val id: Int,
     val title: String,
     val artist: String,
     val path: String,
@@ -14,6 +15,7 @@ data class AudioFile(
 
         other as AudioFile
 
+        if (id != other.id) return false
         if (duration != other.duration) return false
         if (albumId != other.albumId) return false
         if (title != other.title) return false
@@ -25,7 +27,8 @@ data class AudioFile(
     }
 
     override fun hashCode(): Int {
-        var result = duration.hashCode()
+        var result = id
+        result = 31 * result + duration.hashCode()
         result = 31 * result + albumId.hashCode()
         result = 31 * result + title.hashCode()
         result = 31 * result + artist.hashCode()
@@ -33,4 +36,5 @@ data class AudioFile(
         result = 31 * result + (embeddedArt?.contentHashCode() ?: 0)
         return result
     }
+
 }

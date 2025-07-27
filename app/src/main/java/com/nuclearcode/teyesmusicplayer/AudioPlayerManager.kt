@@ -3,6 +3,7 @@ package com.nuclearcode.teyesmusicplayer
 import android.content.Context
 import android.net.Uri
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +17,27 @@ class AudioPlayerManager @Inject constructor(
     context: Context
 ) {
     private val exoPlayer = ExoPlayer.Builder(context).build()
+    private var playlist: List<AudioFile> = emptyList()
+    private var currentIndex = 0
+
+    var onTrackEnded: (() -> Unit)? = null
+
+    init {
+        exoPlayer.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                if (state == Player.STATE_ENDED) {
+                    onTrackEnded?.invoke()
+                }
+            }
+        })
+    }
+
+    fun setPlaylist(files: List<AudioFile>, startIndex: Int = 0) {
+        playlist = files
+        currentIndex = startIndex
+        play(playlist.getOrNull(currentIndex) ?: return)
+    }
+
     private var currentFile: AudioFile? = null
 
     private val _progress = MutableStateFlow(0L)

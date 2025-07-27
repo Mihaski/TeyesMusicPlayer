@@ -17,11 +17,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -33,6 +28,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nuclearcode.teyesmusicplayer.ui.theme.Pink40
 
 
 @Composable
@@ -47,7 +43,9 @@ fun AudioPlayerExpandableBottomPanelPreview() {
         duration = 100L,
         onSeek = { },
         onPlayPause = { },
-        onStop = { }
+        onStop = { },
+        onNext = { },
+        onPrevious = { },
     )
 }
 
@@ -62,6 +60,8 @@ fun AudioPlayerExpandableBottomPanel(
     isPlaying: Boolean,
     progress: Long,
     duration: Long,
+    onNext: () -> Unit,
+    onPrevious: () -> Unit,
     onSeek: (Long) -> Unit,
     onPlayPause: () -> Unit,
     onStop: () -> Unit,
@@ -73,7 +73,7 @@ fun AudioPlayerExpandableBottomPanel(
     val navigationInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val panelHeight by transition.animateDp(label = "panelHeight") { expanded ->
-        if (expanded) screenHeightDp else 100.dp
+        if (expanded) screenHeightDp else 130.dp
     }
 
     LaunchedEffect(Unit) {
@@ -90,7 +90,7 @@ fun AudioPlayerExpandableBottomPanel(
                 .height(panelHeight)
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .background(Color.DarkGray)
+                .background(Pink40)
                 .pointerInput(Unit) {
                     detectVerticalDragGestures { _, dragAmount ->
                         if (dragAmount < -20) onExpandChange(true)
@@ -115,8 +115,8 @@ fun AudioPlayerExpandableBottomPanel(
                     duration = duration,
                     isPlaying = isPlaying,
                     onPlayPause = { onPlayPause() },
-                    onNext = { },
-                    onPrevious = { },
+                    onNext = { onNext() },
+                    onPrevious = { onPrevious() },
                     onSeek = { onSeek(it) },
                     onLike = { }
                 )

@@ -20,6 +20,9 @@ fun getAudioFiles(context: Context): List<AudioFile> {
     val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
     val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
 
+    var idCounter = 0
+
+
     context.contentResolver.query(
         collection, projection, selection, null, sortOrder
     )?.use { cursor ->
@@ -30,6 +33,7 @@ fun getAudioFiles(context: Context): List<AudioFile> {
         val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
         while (cursor.moveToNext()) {
+
             val title = cursor.getString(titleColumn)
             val artist = cursor.getString(artistColumn)
             val path = cursor.getString(pathColumn)
@@ -40,6 +44,7 @@ fun getAudioFiles(context: Context): List<AudioFile> {
 
             audioList.add(
                 AudioFile(
+                    id = idCounter++,
                     title = title,
                     artist = artist,
                     path = path,
@@ -53,6 +58,7 @@ fun getAudioFiles(context: Context): List<AudioFile> {
 
     return audioList
 }
+
 fun getEmbeddedArtwork(path: String): ByteArray? {
     val retriever = MediaMetadataRetriever()
     return try {

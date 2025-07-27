@@ -54,7 +54,7 @@ fun AudioListScreen(
                     file = track,
                     isActive = nowPlaying?.path == track.path,
                     isPlaying = nowPlaying?.path == track.path && isPlaying,
-                    onClick = { viewModel.play(track) }
+                    onClick = { viewModel.playPlaylist(tracks, track.id) }
                 )
             }
         }
@@ -71,6 +71,8 @@ fun AudioListScreen(
             onSeek = { viewModel.seekTo(it) },
             onPlayPause = { viewModel.togglePlayPause() },
             onStop = { viewModel.stop() },
+            onNext = { viewModel.playNext() },
+            onPrevious = { viewModel.playPrevious() },
         )
     }
 }
