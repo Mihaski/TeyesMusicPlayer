@@ -1,7 +1,9 @@
 package com.nuclearcode.teyesmusicplayer
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import androidx.core.content.ContextCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -11,12 +13,13 @@ import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
+import androidx.core.net.toUri
 
 @Singleton
 class AudioPlayerManager @Inject constructor(
-    context: Context
+    private val context: Context
 ) {
-    private val exoPlayer = ExoPlayer.Builder(context).build()
+    val exoPlayer = ExoPlayer.Builder(context).build()
     private var playlist: List<AudioFile> = emptyList()
     private var currentIndex = 0
 
@@ -32,10 +35,27 @@ class AudioPlayerManager @Inject constructor(
         })
     }
 
+    private var serviceStarted = false
+
+    private fun startForegroundService() {
+        val intent = Intent(context, AudioPlaybackService::class.java).apply {
+            putExtra(
+                "AUDIO_URI",
+                exoPlayer.currentMediaItem?.localConfiguration?.uri.toString().toUri()
+            )
+        }
+        ContextCompat.startForegroundService(context, intent)
+    }
+
     fun setPlaylist(files: List<AudioFile>, startIndex: Int = 0) {
         playlist = files
         currentIndex = startIndex
         play(playlist.getOrNull(currentIndex) ?: return)
+
+        if (!serviceStarted) {
+            startForegroundService()
+            serviceStarted = true
+        }
     }
 
     private var currentFile: AudioFile? = null
@@ -75,6 +95,7 @@ class AudioPlayerManager @Inject constructor(
         exoPlayer.play()
         _isPlaying.value = true
     }
+
     fun stop() {
         exoPlayer.stop()
         _isPlaying.value = false
@@ -82,6 +103,7 @@ class AudioPlayerManager @Inject constructor(
         _progress.value = 0
         currentFile = null // <-- ВАЖНО: сброс текущего файла
     }
+
     fun seekTo(position: Long) {
         exoPlayer.seekTo(position)
     }

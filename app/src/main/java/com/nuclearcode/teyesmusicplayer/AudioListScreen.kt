@@ -54,7 +54,9 @@ fun AudioListScreen(
                     file = track,
                     isActive = nowPlaying?.path == track.path,
                     isPlaying = nowPlaying?.path == track.path && isPlaying,
-                    onClick = { viewModel.playPlaylist(tracks, track.id) }
+                    onClick = { viewModel.
+                        playPlaylist(tracks, track.id)
+                     }
                 )
             }
         }

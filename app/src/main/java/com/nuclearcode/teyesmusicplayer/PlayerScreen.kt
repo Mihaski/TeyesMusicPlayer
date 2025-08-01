@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -98,7 +99,8 @@ fun PlayerScreen(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(35.dp))
+                    .clip(RoundedCornerShape(35.dp)),
+                contentScale = ContentScale.FillWidth
             )
         } else {
             Image(

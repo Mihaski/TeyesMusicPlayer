@@ -63,7 +63,9 @@ dependencies {
     implementation(libs.dagger.just)
     implementation(libs.dagger.compiler)
     ksp(libs.dagger.compiler)
-    implementation(libs.exoplayer.just)
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
 
+    implementation(libs.androidx.media)
 
 }
