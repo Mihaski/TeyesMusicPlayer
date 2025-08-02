@@ -1,5 +1,9 @@
 package com.nuclearcode.teyesmusicplayer
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class AudioFile(
     val id: Int,
     val title: String,
@@ -8,7 +12,7 @@ data class AudioFile(
     val duration: Long,
     val albumId: Long,
     val embeddedArt: ByteArray? = null
-) {
+) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

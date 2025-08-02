@@ -47,7 +47,7 @@ class AudioPlayerManager @Inject constructor(
         ContextCompat.startForegroundService(context, intent)
     }
 
-    fun setPlaylist(files: List<AudioFile>, startIndex: Int = 0) {
+    fun setPlaylistInManager(files: List<AudioFile>, startIndex: Int = 0) {
         playlist = files
         currentIndex = startIndex
         play(playlist.getOrNull(currentIndex) ?: return)

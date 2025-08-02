@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp.plugin)
+    alias(libs.plugins.kotlin.parcelize.plugin)
 }
 
 android {
@@ -65,7 +66,6 @@ dependencies {
     ksp(libs.dagger.compiler)
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
-
     implementation(libs.androidx.media)
 
 }

@@ -48,3 +48,4 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 #Added
 ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-parcelize-plugin = { id = "kotlin-parcelize" }

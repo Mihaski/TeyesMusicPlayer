@@ -1,5 +1,8 @@
 package com.nuclearcode.teyesmusicplayer
 
+import android.content.Context
+import android.content.Intent
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,12 +54,12 @@ class AudioPlayerViewModel @Inject constructor(
         }
     }
 
-    fun playPlaylist(files: List<AudioFile>, startIndex: Int) {
-        currentPlaylist = files
-        currentIndex = startIndex
-        _nowPlaying.value = files.getOrNull(startIndex)
-        playerManager.setPlaylist(files, startIndex)
-    }
+//    fun playPlaylist(files: List<AudioFile>, startIndex: Int) {
+//        currentPlaylist = files
+//        currentIndex = startIndex
+//        _nowPlaying.value = files.getOrNull(startIndex)
+//        playerManager.setPlaylist(files, startIndex)
+//    }
 
     fun togglePlayPause() {
         if (playerManager.isPlaying()) {
@@ -81,5 +84,29 @@ class AudioPlayerViewModel @Inject constructor(
         super.onCleared()
         playerManager.release()
         repository.unregister()
+    }
+
+    fun playPlaylist(files: List<AudioFile>, startIndex: Int, context: Context) {
+        currentPlaylist = files
+        currentIndex = startIndex
+        val track = files.getOrNull(startIndex) ?: return
+        _nowPlaying.value = track
+        playerManager.setPlaylistInManager(files, startIndex)
+
+        // Запуск сервиса
+        val serviceIntent = Intent(context, AudioPlaybackService::class.java).apply {
+            putParcelableArrayListExtra("PLAYLIST", ArrayList(files))
+            putExtra("START_INDEX", startIndex)
+        }
+
+        ContextCompat.startForegroundService(context, serviceIntent)
+    }
+
+
+    fun sendCommand(context: Context, command: PlaybackCommand) {
+        val intent = Intent(context, AudioPlaybackService::class.java).apply {
+            action = command.name
+        }
+        context.startService(intent)
     }
 }

@@ -1,5 +1,6 @@
 package com.nuclearcode.teyesmusicplayer
 
+import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -38,6 +40,7 @@ fun AudioListScreen(
     val progress by viewModel.progress.collectAsState()
     val duration = nowPlaying?.let { viewModel.getDuration() } ?: 0L
     val isPlaying by viewModel.isPlaying.collectAsState()
+    val context = LocalContext.current
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -55,8 +58,8 @@ fun AudioListScreen(
                     isActive = nowPlaying?.path == track.path,
                     isPlaying = nowPlaying?.path == track.path && isPlaying,
                     onClick = { viewModel.
-                        playPlaylist(tracks, track.id)
-                     }
+                        playPlaylist(tracks, track.id, context)
+                    }
                 )
             }
         }
