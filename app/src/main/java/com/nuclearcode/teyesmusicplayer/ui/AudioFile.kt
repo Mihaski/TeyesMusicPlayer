@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer.ui
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

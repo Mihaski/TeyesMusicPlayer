@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer.ui
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -37,8 +37,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nuclearcode.teyesmusicplayer.R
 import com.nuclearcode.teyesmusicplayer.ui.theme.PurpleGrey40
 import com.nuclearcode.teyesmusicplayer.ui.theme.PurpleGrey80
 
@@ -118,12 +120,15 @@ fun PlayerScreen(
         Text(
             text = title,
             style = MaterialTheme.typography.titleLarge,
-            color = Color.White
+            color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
         Text(
             text = artist,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.White.copy(alpha = 0.7f)
+            color = Color.White.copy(alpha = 0.7f),
+            maxLines = 1,
         )
 
         Spacer(Modifier.height(16.dp))

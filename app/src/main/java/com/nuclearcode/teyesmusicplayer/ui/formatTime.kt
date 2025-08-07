@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer.ui
 
 fun formatTime(ms: Long): String {
     val totalSec = ms / 1000

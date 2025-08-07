@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer.ui
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.nuclearcode.teyesmusicplayer.R
 
 @Composable
 @Preview
@@ -49,6 +50,9 @@ private fun TrackPreview() {
 
 @Composable
 fun TrackItem(
+//    title: String, todo
+//    artists: String, todo
+//    artists: ByteArray?, todo
     file: AudioFile,
     isActive: Boolean, // текущий выбранный трек
     isPlaying: Boolean, // играет или на паузе

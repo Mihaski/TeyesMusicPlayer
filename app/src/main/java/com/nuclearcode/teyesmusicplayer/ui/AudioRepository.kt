@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer.ui
 
 import android.content.Context
 import android.database.ContentObserver

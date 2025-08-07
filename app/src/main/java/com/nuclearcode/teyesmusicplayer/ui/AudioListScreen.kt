@@ -1,6 +1,5 @@
-package com.nuclearcode.teyesmusicplayer
+package com.nuclearcode.teyesmusicplayer.ui
 
-import android.content.Context
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,22 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-
-@Composable
-@Preview
-fun AudioListScreenPreview() {//todo удалить т.к. не рендериться
-
-    val viewModel = viewModel<AudioPlayerViewModel>()
-
-    AudioListScreen(
-        Modifier,
-        viewModel
-    )
-}
 
 @Composable
 fun AudioListScreen(
@@ -37,10 +21,10 @@ fun AudioListScreen(
 ) {
     val tracks by viewModel.audioFiles.collectAsState()
     val nowPlaying by viewModel.nowPlaying.collectAsState()
-    val progress by viewModel.progress.collectAsState()
-    val duration = nowPlaying?.let { viewModel.getDuration() } ?: 0L
     val isPlaying by viewModel.isPlaying.collectAsState()
-    val context = LocalContext.current
+    val duration by viewModel.duration.collectAsState()
+    val progress by viewModel.progress.collectAsState()
+
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -53,12 +37,13 @@ fun AudioListScreen(
                 .padding(bottom = if (isExpanded) 0.dp else 80.dp)
         ) {
             items(tracks) { track ->
+
                 TrackItem(
                     file = track,
-                    isActive = nowPlaying?.path == track.path,
-                    isPlaying = nowPlaying?.path == track.path && isPlaying,
-                    onClick = { viewModel.
-                        playPlaylist(tracks, track.id, context)
+                    isActive = nowPlaying?.id == track.id,
+                    isPlaying = isPlaying, //todo если криво работает иконка смотри сюда
+                    onClick = {
+                        viewModel.play(track)
                     }
                 )
             }
@@ -74,7 +59,7 @@ fun AudioListScreen(
             progress = progress,
             duration = duration,
             onSeek = { viewModel.seekTo(it) },
-            onPlayPause = { viewModel.togglePlayPause() },
+            onPlayPause = { viewModel.resumePause() },
             onStop = { viewModel.stop() },
             onNext = { viewModel.playNext() },
             onPrevious = { viewModel.playPrevious() },
