@@ -16,8 +16,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AudioListScreen(
-    modifier: Modifier,
-    viewModel: AudioPlayerViewModel
+    modifier: Modifier = Modifier,
+    viewModel: AudioPlayerViewModel,
+    isExpandedHost: Boolean,
+    onExpandChangeHost: (Boolean) -> Unit,
 ) {
     val tracks by viewModel.audioFiles.collectAsState()
     val nowPlaying by viewModel.nowPlaying.collectAsState()
@@ -26,7 +28,7 @@ fun AudioListScreen(
     val progress by viewModel.progress.collectAsState()
 
 
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(isExpandedHost) }
 
     Box(
         modifier
@@ -53,7 +55,10 @@ fun AudioListScreen(
             title = nowPlaying?.title ?: "Cause: collectAsState",
             artist = nowPlaying?.artist ?: "Cause: collectAsState",
             isExpanded = isExpanded,
-            onExpandChange = { isExpanded = it },
+            onExpandChange = {
+                isExpanded = it
+                onExpandChangeHost(it)
+            },
             byteArrayCover = nowPlaying?.embeddedArt,
             isPlaying = isPlaying,
             progress = progress,

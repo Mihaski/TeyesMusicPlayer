@@ -7,7 +7,6 @@ import android.content.Context
 
 @Module
 class AppModule(private val appContext: Context) {
-
     @Provides
     @Singleton
     fun provideContext(): Context = appContext

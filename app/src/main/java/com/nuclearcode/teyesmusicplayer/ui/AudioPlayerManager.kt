@@ -47,6 +47,7 @@ class AudioPlayerManager @Inject constructor(context: Context) {
 
     private fun stopProgressUpdates() {
         progressJob?.cancel()
+        progressJob = null
     }
     var nextCallback: (() -> Unit)? = null
 
@@ -67,6 +68,7 @@ class AudioPlayerManager @Inject constructor(context: Context) {
                     nextCallback?.invoke()
                 }
                 if (state == Player.STATE_READY) {
+                    // get duration
                     _durationFlow.value = exoPlayer.duration.coerceAtLeast(0L)
                 }
             }
@@ -86,10 +88,12 @@ class AudioPlayerManager @Inject constructor(context: Context) {
     fun stop() {
         exoPlayer.stop()
         _nowPlaying.value = null
+        stopProgressUpdates()
     }
 
     fun release() {
         exoPlayer.release()
         _nowPlaying.value = null
+        stopProgressUpdates()
     }
 }

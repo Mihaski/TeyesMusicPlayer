@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nuclearcode.teyesmusicplayer.R
@@ -56,7 +57,12 @@ fun MiniPlayer(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(8.dp)
         ) {
-            Text(title, modifier = Modifier.weight(1f))
+            Text(
+                title,
+                modifier = Modifier.weight(1f),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
             IconButton(onClick = onPlayPause) {
                 Icon(
                     if (isPlaying) ImageVector.vectorResource(

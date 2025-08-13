@@ -30,7 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nuclearcode.teyesmusicplayer.ui.theme.Pink40
 
-
 @Composable
 @Preview
 fun AudioPlayerExpandableBottomPanelPreview() {

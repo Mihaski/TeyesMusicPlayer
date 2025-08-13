@@ -14,6 +14,9 @@ class AudioRepository @Inject constructor(private val context: Context) {
     private val _audioFiles = MutableStateFlow<List<AudioFile>>(emptyList())
     val audioFiles: StateFlow<List<AudioFile>> = _audioFiles
 
+    private val _directories = MutableStateFlow<List<String>>(emptyList())
+    val directories: StateFlow<List<String>> = _directories
+
     private val observer = object : ContentObserver(Handler(Looper.getMainLooper())) {
         override fun onChange(selfChange: Boolean) {
             loadAudioFiles()
@@ -35,7 +38,13 @@ class AudioRepository @Inject constructor(private val context: Context) {
 
     private fun loadAudioFiles() {
         val list = getAudioFiles(context)
-
         _audioFiles.value = list
+
+        // Собираем директории из списка аудиофайлов
+        val dirs = list.map { it.path.substringBeforeLast("/") }
+            .toSet()
+            .toList()
+            .sorted()
+        _directories.value = dirs
     }
 }
