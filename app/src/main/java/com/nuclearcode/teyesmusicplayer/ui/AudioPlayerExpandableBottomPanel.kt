@@ -106,7 +106,7 @@ fun AudioPlayerExpandableBottomPanel(
                 },
         ) {
             if (isExpanded) {// Полноэкранный плеер
-                PlayerScreen( // todo enter interactive data
+                PlayerScreen(
                     title = title,
                     artist = artist,
                     byteArrayCover = byteArrayCover,

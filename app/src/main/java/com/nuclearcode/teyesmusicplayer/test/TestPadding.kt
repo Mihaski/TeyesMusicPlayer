@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-@Preview(showBackground = true, backgroundColor = 0x0000000000)
+@Preview(showBackground = true, backgroundColor = 0x0000000000, showSystemUi = true)
 fun TestPadding() {
 
     Box(

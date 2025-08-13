@@ -35,7 +35,11 @@ fun AppNavHost(
         }
     ) { innerPadding ->
         NavHost(
-            modifier = Modifier.padding(innerPadding),
+            modifier = if (isExpandedHost) {
+                Modifier // без паддинга
+            } else {
+                Modifier.padding(innerPadding)
+            },
             navController = navHostController,
             startDestination = startDestination,
         ) {

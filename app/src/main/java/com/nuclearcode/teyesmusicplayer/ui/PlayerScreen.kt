@@ -74,7 +74,6 @@ fun PlayerScreen(
     onSeek: (Long) -> Unit,
     onLike: () -> Unit,
 ) {
-
     val safeDuration = duration.takeIf { it > 0 } ?: 1L
     val safeProgress = progress.coerceIn(0L, safeDuration)
 
