@@ -2,6 +2,10 @@ package com.nuclearcode.teyesmusicplayer.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nuclearcode.teyesmusicplayer.utility.AudioPlayerManager
+import com.nuclearcode.teyesmusicplayer.utility.AudioRepository
+import com.nuclearcode.teyesmusicplayer.utility.AudioServiceConnection
+import com.nuclearcode.teyesmusicplayer.utility.PlaybackCommand
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +24,7 @@ class AudioPlayerViewModel @Inject constructor(
     val progress: StateFlow<Long> = playerManager.progressFlow
     val duration = playerManager.durationFlow
     val directories = repository.directories
-    private val _selectedDirs = MutableStateFlow<Set<String>>(emptySet())
+    private val _selectedDirs = MutableStateFlow<Set<String>>(directories.value.toSet())
     val selectedDirs: StateFlow<Set<String>> = _selectedDirs
 
     val filteredAudioFiles: StateFlow<List<AudioFile>> =

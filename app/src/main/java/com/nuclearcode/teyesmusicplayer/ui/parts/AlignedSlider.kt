@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.ui.parts
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween

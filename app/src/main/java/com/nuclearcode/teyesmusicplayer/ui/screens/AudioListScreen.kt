@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,6 +13,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.nuclearcode.teyesmusicplayer.ui.parts.AudioPlayerExpandableBottomPanel
+import com.nuclearcode.teyesmusicplayer.ui.AudioPlayerViewModel
+import com.nuclearcode.teyesmusicplayer.ui.parts.TrackItem
 
 @Composable
 fun AudioListScreen(
@@ -21,7 +24,8 @@ fun AudioListScreen(
     isExpandedHost: Boolean,
     onExpandChangeHost: (Boolean) -> Unit,
 ) {
-    val tracks by viewModel.audioFiles.collectAsState()
+//    val tracks by viewModel.audioFiles.collectAsState() todo delete
+    val filteredTracks by viewModel.filteredAudioFiles.collectAsState()
     val nowPlaying by viewModel.nowPlaying.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
     val duration by viewModel.duration.collectAsState()
@@ -38,7 +42,7 @@ fun AudioListScreen(
                 .fillMaxSize()
                 .padding(bottom = if (isExpanded) 0.dp else 80.dp)
         ) {
-            items(tracks) { track ->
+            items(filteredTracks) { track ->
 
                 TrackItem(
                     file = track,

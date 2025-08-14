@@ -2,6 +2,9 @@ package com.nuclearcode.teyesmusicplayer.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.nuclearcode.teyesmusicplayer.utility.AudioPlayerManager
+import com.nuclearcode.teyesmusicplayer.utility.AudioRepository
+import com.nuclearcode.teyesmusicplayer.utility.AudioServiceConnection
 import javax.inject.Inject
 
 class AudioPlayerViewModelFactory @Inject constructor(

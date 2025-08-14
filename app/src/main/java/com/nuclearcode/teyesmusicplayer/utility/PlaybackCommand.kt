@@ -1,4 +1,6 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.utility
+
+import com.nuclearcode.teyesmusicplayer.ui.AudioFile
 
 sealed class PlaybackCommand {
     data class Play(val playlist: List<AudioFile>, val index: Int) : PlaybackCommand()

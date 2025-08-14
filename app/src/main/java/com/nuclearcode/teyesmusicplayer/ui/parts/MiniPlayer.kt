@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.ui.parts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.nuclearcode.teyesmusicplayer.R
+import com.nuclearcode.teyesmusicplayer.utility.formatTime
 
 @Composable
 @Preview

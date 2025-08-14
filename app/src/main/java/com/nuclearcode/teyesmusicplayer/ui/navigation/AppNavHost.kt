@@ -11,10 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.nuclearcode.teyesmusicplayer.DirectorySelector
-import com.nuclearcode.teyesmusicplayer.ui.AudioListScreen
+import com.nuclearcode.teyesmusicplayer.ui.screens.DirectorySelector
+import com.nuclearcode.teyesmusicplayer.ui.screens.AudioListScreen
 import com.nuclearcode.teyesmusicplayer.ui.AudioPlayerViewModel
-import com.nuclearcode.teyesmusicplayer.ui.FavoritesScreen
+import com.nuclearcode.teyesmusicplayer.ui.screens.FavoritesScreen
 
 @Composable
 fun AppNavHost(

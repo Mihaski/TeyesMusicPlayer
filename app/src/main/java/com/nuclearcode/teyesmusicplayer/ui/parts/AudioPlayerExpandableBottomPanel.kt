@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.ui.parts
 
 import android.util.Log
 import androidx.compose.animation.core.animateDp

@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.utility
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
 import com.nuclearcode.teyesmusicplayer.PlayerApp
 import com.nuclearcode.teyesmusicplayer.R
+import com.nuclearcode.teyesmusicplayer.ui.AudioFile
 import javax.inject.Inject
 
 class AudioPlaybackService : Service() {

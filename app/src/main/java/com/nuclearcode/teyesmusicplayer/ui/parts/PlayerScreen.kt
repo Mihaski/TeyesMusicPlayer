@@ -1,4 +1,4 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.ui.parts
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import com.nuclearcode.teyesmusicplayer.R
 import com.nuclearcode.teyesmusicplayer.ui.theme.PurpleGrey40
 import com.nuclearcode.teyesmusicplayer.ui.theme.PurpleGrey80
+import com.nuclearcode.teyesmusicplayer.utility.formatTime
 
 @Preview
 @Composable

@@ -1,8 +1,9 @@
-package com.nuclearcode.teyesmusicplayer.ui
+package com.nuclearcode.teyesmusicplayer.utility
 
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
+import com.nuclearcode.teyesmusicplayer.ui.AudioFile
 
 fun getAudioFiles(context: Context): List<AudioFile> {
     val audioList = mutableListOf<AudioFile>()
