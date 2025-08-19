@@ -42,6 +42,9 @@ class AudioPlayerViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    fun refreshAudioFiles() {
+        repository.loadAudioFiles()
+    }
     fun toggleDirectory(dir: String) {
         _selectedDirs.value = _selectedDirs.value.toMutableSet().apply {
             if (contains(dir)) remove(dir) else add(dir)

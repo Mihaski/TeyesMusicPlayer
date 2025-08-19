@@ -15,6 +15,7 @@ import com.nuclearcode.teyesmusicplayer.ui.screens.DirectorySelector
 import com.nuclearcode.teyesmusicplayer.ui.screens.AudioListScreen
 import com.nuclearcode.teyesmusicplayer.ui.AudioPlayerViewModel
 import com.nuclearcode.teyesmusicplayer.ui.screens.FavoritesScreen
+import com.nuclearcode.teyesmusicplayer.utility.PermissionHandler
 
 @Composable
 fun AppNavHost(
@@ -23,6 +24,12 @@ fun AppNavHost(
     startDestination: String,
 ) {
     var isExpandedHost by remember { mutableStateOf(false) }
+
+    PermissionHandler(
+        onPermissionGranted = {
+            audioViewModel.refreshAudioFiles()
+        }
+    )
 
     Scaffold(
         bottomBar = {

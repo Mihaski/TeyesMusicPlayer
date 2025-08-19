@@ -37,15 +37,15 @@ class AudioRepository @Inject constructor(private val context: Context) {
         context.contentResolver.unregisterContentObserver(observer)
     }
 
-    private fun loadAudioFiles() {
-        val list = getAudioFiles(context)
-        _audioFiles.value = list
+    fun loadAudioFiles() {
+            val list = getAudioFiles(context)
+            _audioFiles.value = list
 
-        // Собираем директории из списка аудиофайлов
-        val dirs = list.map { it.path.substringBeforeLast("/") }
-            .toSet()
-            .toList()
-            .sorted()
-        _directories.value = dirs
+            // Собираем директории из списка аудиофайлов
+            val dirs = list.map { it.path.substringBeforeLast("/") }
+                .toSet()
+                .toList()
+                .sorted()
+            _directories.value = dirs
     }
 }
