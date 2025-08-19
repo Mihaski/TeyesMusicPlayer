@@ -2,6 +2,8 @@ package com.nuclearcode.teyesmusicplayer.utility
 
 import android.content.Context
 import android.net.Uri
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -53,6 +55,13 @@ class AudioPlayerManager @Inject constructor(context: Context) {
     var nextCallback: (() -> Unit)? = null
 
     init {
+        exoPlayer.setAudioAttributes( // управление фокусом
+            AudioAttributes.Builder()
+                .setUsage(C.USAGE_MEDIA)
+                .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
+                .build(), true
+        )
+
         exoPlayer.addListener(object : Player.Listener {
             override fun onMediaMetadataChanged(metadata: MediaMetadata) {
                 _durationFlow.value = exoPlayer.duration.coerceAtLeast(0L)
