@@ -6,7 +6,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Binder
 import android.os.Build
@@ -14,23 +13,21 @@ import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
 import androidx.media.app.NotificationCompat.MediaStyle
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.ui.PlayerNotificationManager
 import com.nuclearcode.teyesmusicplayer.PlayerApp
 import com.nuclearcode.teyesmusicplayer.R
 import com.nuclearcode.teyesmusicplayer.ui.AudioFile
 import com.nuclearcode.teyesmusicplayer.ui.MainActivity
 import javax.inject.Inject
 
-@UnstableApi
 class AudioPlaybackService : Service() {
+
     @Inject
     lateinit var playerManager: AudioPlayerManager
-    private lateinit var playerNotificationManager: PlayerNotificationManager
+
+    private lateinit var mediaSessionCompat: MediaSessionCompat
     private var playlist: List<AudioFile> = emptyList()
     private var currentIndex = 0
-    private lateinit var mediaSessionCompat: MediaSessionCompat
+    private lateinit var notificationManager: NotificationManager
 
     inner class AudioServiceBinder : Binder() {
         fun handleCommand(command: PlaybackCommand) {
@@ -39,7 +36,6 @@ class AudioPlaybackService : Service() {
                     playlist = command.playlist
                     playTrackAt(command.index)
                 }
-
                 is PlaybackCommand.Pause -> playerManager.pause()
                 is PlaybackCommand.Resume -> playerManager.resume()
                 is PlaybackCommand.Stop -> playerManager.stop()
@@ -50,142 +46,134 @@ class AudioPlaybackService : Service() {
         }
     }
 
-    override fun onBind(intent: Intent?): IBinder? = AudioServiceBinder()
+    override fun onBind(intent: Intent?): IBinder = AudioServiceBinder()
 
     override fun onCreate() {
         super.onCreate()
         (application as PlayerApp).appComponent.injectService(this)
 
-        mediaSessionCompat = MediaSessionCompat(this, "CompatSession")
+        mediaSessionCompat = MediaSessionCompat(this, "AudioSession")
         mediaSessionCompat.isActive = true
-        playerManager.nextCallback = {
-            playNext()
-        }
+
+        playerManager.nextCallback = { playNext() }
 
         createNotificationChannel()
-
-        playerNotificationManager = PlayerNotificationManager.Builder(
-            this,
-            NOTIFICATION_ID,
-            CHANNEL_ID // 🔥 теперь тот же ID
-        )
-            .setSmallIconResourceId(R.drawable.ic_launcher_foreground) // 🔥 безопасная иконка
-            .setMediaDescriptionAdapter(DescriptionAdapter())
-            .setNotificationListener(NotificationListenerTeyes())
-            .setChannelImportance(NotificationManager.IMPORTANCE_LOW)
-            .build()
-            .apply {
-                setPlayer(playerManager.exoPlayer)
-                setUseNextAction(true)
-                setUsePreviousAction(true)
-                setUseFastForwardAction(false)
-                setUseRewindAction(false)
-            }
-
-//        startForeground(NOTIFICATION_ID, buildNotification())
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-
-        return START_STICKY
+        startForeground(NOTIFICATION_ID, buildNotification())
     }
 
     private fun playTrackAt(index: Int) {
         if (index in playlist.indices) {
             currentIndex = index
             playerManager.play(playlist[currentIndex])
+            startForeground(NOTIFICATION_ID, buildNotification())
         }
     }
 
     private fun playNext() {
-        if (currentIndex + 1 < playlist.size) {
-            playTrackAt(currentIndex + 1)
-        }
+        if (currentIndex + 1 < playlist.size) playTrackAt(currentIndex + 1)
     }
 
     private fun playPrevious() {
-        if (currentIndex - 1 >= 0) {
-            playTrackAt(currentIndex - 1)
-        }
+        if (currentIndex - 1 >= 0) playTrackAt(currentIndex - 1)
     }
 
     private fun buildNotification(): Notification {
-        createNotificationChannel()
+        val intent = PendingIntent.getActivity(
+            this, 0, Intent(this, MainActivity::class.java),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val playPauseAction = if (playerManager.exoPlayer.isPlaying) {
+            NotificationCompat.Action(
+                android.R.drawable.ic_media_pause,
+                "Pause",
+                PendingIntent.getService(
+                    this,
+                    0,
+                    Intent(this, AudioPlaybackService::class.java).apply {
+                        putExtra("COMMAND", "PAUSE")
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+        } else {
+            NotificationCompat.Action(
+                android.R.drawable.ic_media_play,
+                "Play",
+                PendingIntent.getService(
+                    this,
+                    0,
+                    Intent(this, AudioPlaybackService::class.java).apply {
+                        putExtra("COMMAND", "RESUME")
+                    },
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            )
+        }
+
+        val nextAction = NotificationCompat.Action(
+            android.R.drawable.ic_media_next,
+            "Next",
+            PendingIntent.getService(
+                this,
+                0,
+                Intent(this, AudioPlaybackService::class.java).apply {
+                    putExtra("COMMAND", "NEXT")
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        )
+
+        val prevAction = NotificationCompat.Action(
+            android.R.drawable.ic_media_previous,
+            "Previous",
+            PendingIntent.getService(
+                this,
+                0,
+                Intent(this, AudioPlaybackService::class.java).apply {
+                    putExtra("COMMAND", "PREVIOUS")
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Аудио воспроизведение")
-            .setContentText("Трек играет")
+            .setContentText("Исполняется трек")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.round_settings_24))
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
             .setOngoing(true)
-            .setStyle(
-                MediaStyle()
-                    .setMediaSession(mediaSessionCompat.sessionToken)
-            )
+            .setContentIntent(intent)
+            .addAction(prevAction)
+            .addAction(playPauseAction)
+            .addAction(nextAction)
+            .setStyle(MediaStyle().setMediaSession(mediaSessionCompat.sessionToken))
             .build()
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager =
+                getSystemService(NotificationManager::class.java) ?: return
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "Аудио плеер",
                 NotificationManager.IMPORTANCE_LOW
-            ).apply {
-                description = "Фоновое воспроизведение"
-            }
-            getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
+            )
+            channel.description = "Фоновое воспроизведение"
+            notificationManager.createNotificationChannel(channel)
         }
     }
 
     override fun onDestroy() {
-        playerNotificationManager.setPlayer(null)
         playerManager.release()
         super.onDestroy()
     }
 
     companion object {
-        private const val CHANNEL_ID = "audio_playback_channel"
+
         private const val NOTIFICATION_ID = 1
-    }
-
-    private inner class DescriptionAdapter : PlayerNotificationManager.MediaDescriptionAdapter {
-        override fun getCurrentContentTitle(player: Player): String {
-            return "Моя музыка" // Заголовок (имя трека)
-        }
-
-        override fun createCurrentContentIntent(player: Player): PendingIntent? {
-            return PendingIntent.getActivity(
-                this@AudioPlaybackService,
-                0,
-                Intent(this@AudioPlaybackService, MainActivity::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        }
-
-        override fun getCurrentContentText(player: Player): String? {
-            return "Исполняется трек" // Доп. текст
-        }
-
-        override fun getCurrentLargeIcon(
-            player: Player,
-            callback: PlayerNotificationManager.BitmapCallback
-        ): Bitmap? {
-            // можно вернуть обложку альбома
-            return BitmapFactory.decodeResource(resources, R.drawable.round_settings_24)
-        }
-    }
-
-    private inner class NotificationListenerTeyes : PlayerNotificationManager.NotificationListener {
-        override fun onNotificationCancelled(notificationId: Int, dismissedByUser: Boolean) {
-            stopSelf() // убираем сервис, если уведомление закрыто
-        }
-
-        override fun onNotificationPosted(
-            notificationId: Int,
-            notification: Notification,
-            ongoing: Boolean
-        ) {
-            startForeground(notificationId, notification)
-        }
+        private const val CHANNEL_ID = "audio_playback_channel"
     }
 }
