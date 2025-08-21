@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.media3.common.util.UnstableApi
 import javax.inject.Inject
 
+@UnstableApi
 class AudioServiceConnection @Inject constructor(context: Context) : ServiceConnection {
 
     private var binder: AudioPlaybackService.AudioServiceBinder? = null
