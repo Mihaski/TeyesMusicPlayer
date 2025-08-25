@@ -22,7 +22,7 @@ class TestForegroundService : Service() {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Foreground Service Test")
             .setContentText("Service is running")
-            .setSmallIcon(R.drawable.ic_music_note) // убедись, что иконка есть
+            .setSmallIcon(R.drawable.outline_kitesurfing_24) // убедись, что иконка есть
             .setOngoing(true)
             .build()
 

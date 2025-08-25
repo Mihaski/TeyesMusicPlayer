@@ -65,7 +65,7 @@ class AudioPlaybackService : Service() {
         )
             .setMediaDescriptionAdapter(DescriptionAdapter())
             .setNotificationListener(NotificationListenerTeyes())
-            .setSmallIconResourceId(R.drawable.ic_music_note)
+            .setSmallIconResourceId(R.drawable.outline_music_note_24)
             .build()
             .apply {
                 setPlayer(playerManager.exoPlayer)
@@ -74,6 +74,10 @@ class AudioPlaybackService : Service() {
                 setUseNextAction(true)
                 setUsePreviousAction(true)
             }
+
+        playerManager.nextCallback = {
+            playNext()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
