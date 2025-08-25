@@ -61,14 +61,16 @@ dependencies {
     //Added
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.coil.compose)
-    implementation(libs.dagger.just)
-    implementation(libs.dagger.compiler)
-    ksp(libs.dagger.compiler)
-    implementation(libs.media3.exoplayer)
-    implementation(libs.media3.session)
     implementation(libs.androidx.media)
     implementation(libs.data.store)
     implementation(libs.androidx.navigation.compose)
+    //dagger
+    implementation(libs.dagger.just)
+    implementation(libs.dagger.compiler)
+    ksp(libs.dagger.compiler)
+    //media3
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.session)
     implementation(libs.androidx.media3.ui)
 
 }

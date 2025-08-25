@@ -2,6 +2,7 @@ package com.nuclearcode.teyesmusicplayer.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.media3.common.util.UnstableApi
 import com.nuclearcode.teyesmusicplayer.utility.AudioPlayerManager
 import com.nuclearcode.teyesmusicplayer.utility.AudioRepository
 import com.nuclearcode.teyesmusicplayer.utility.AudioServiceConnection
@@ -13,6 +14,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
+@UnstableApi
 class AudioPlayerViewModel @Inject constructor(
     private val repository: AudioRepository,
     playerManager: AudioPlayerManager,

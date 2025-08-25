@@ -1,5 +1,6 @@
 package com.nuclearcode.teyesmusicplayer.utility
 
+import android.content.ContentUris
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
@@ -11,6 +12,7 @@ fun getAudioFiles(context: Context): List<AudioFile> {
     val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
 
     val projection = arrayOf(
+        MediaStore.Audio.Media._ID,
         MediaStore.Audio.Media.TITLE,
         MediaStore.Audio.Media.ARTIST,
         MediaStore.Audio.Media.DATA,
@@ -32,9 +34,11 @@ fun getAudioFiles(context: Context): List<AudioFile> {
         val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
         val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
         val albumIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+        val idLongColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)
 
         while (cursor.moveToNext()) {
 
+            val id = cursor.getLong(idLongColumn)
             val title = cursor.getString(titleColumn)
             val artist = cursor.getString(artistColumn)
             val path = cursor.getString(pathColumn)
@@ -43,15 +47,22 @@ fun getAudioFiles(context: Context): List<AudioFile> {
 
             val embeddedArt = getEmbeddedArtwork(path)
 
+            val contentUri = ContentUris.withAppendedId(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                id
+            )
+
             audioList.add(
                 AudioFile(
+                    contentUri = contentUri.toString(),
                     id = idCounter++,
                     title = title,
                     artist = artist,
                     path = path,
                     duration = duration,
                     albumId = albumId,
-                    embeddedArt = embeddedArt
+                    embeddedArt = embeddedArt,
+                    embeddedIdLong = id
                 )
             )
         }

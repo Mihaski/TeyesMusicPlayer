@@ -5,6 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class AudioFile(
+    val contentUri: String,
+    val embeddedIdLong: Long,
     val id: Int,
     val title: String,
     val artist: String,
@@ -19,9 +21,11 @@ data class AudioFile(
 
         other as AudioFile
 
+        if (embeddedIdLong != other.embeddedIdLong) return false
         if (id != other.id) return false
         if (duration != other.duration) return false
         if (albumId != other.albumId) return false
+        if (contentUri != other.contentUri) return false
         if (title != other.title) return false
         if (artist != other.artist) return false
         if (path != other.path) return false
@@ -31,14 +35,15 @@ data class AudioFile(
     }
 
     override fun hashCode(): Int {
-        var result = id
+        var result = embeddedIdLong.hashCode()
+        result = 31 * result + id
         result = 31 * result + duration.hashCode()
         result = 31 * result + albumId.hashCode()
+        result = 31 * result + contentUri.hashCode()
         result = 31 * result + title.hashCode()
         result = 31 * result + artist.hashCode()
         result = 31 * result + path.hashCode()
         result = 31 * result + (embeddedArt?.contentHashCode() ?: 0)
         return result
     }
-
 }

@@ -37,6 +37,8 @@ private fun TrackPreview() {
 
     TrackItem(
         file = AudioFile(
+            "",
+            1L,
             0,
             "sdasd",
             "sdasdad",
