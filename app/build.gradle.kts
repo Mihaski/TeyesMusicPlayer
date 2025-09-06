@@ -4,16 +4,17 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp.plugin)
     alias(libs.plugins.kotlin.parcelize.plugin)
+    alias(libs.plugins.serialization.plugin)
 }
 
 android {
     namespace = "com.nuclearcode.teyesmusicplayer"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.nuclearcode.teyesmusicplayer"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -63,7 +64,6 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.androidx.media)
     implementation(libs.data.store)
-    implementation(libs.androidx.navigation.compose)
     //dagger
     implementation(libs.dagger.just)
     implementation(libs.dagger.compiler)
@@ -72,5 +72,10 @@ dependencies {
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
     implementation(libs.androidx.media3.ui)
+    //navigation3
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.navigation3.ui)
+    //delete in future
+    implementation(libs.androidx.navigation.compose)
 
 }

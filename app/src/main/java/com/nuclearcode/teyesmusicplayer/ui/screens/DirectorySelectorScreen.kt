@@ -14,16 +14,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.media3.common.util.UnstableApi
 import com.nuclearcode.teyesmusicplayer.ui.AudioPlayerViewModel
 
+@UnstableApi
 @Composable
-fun DirectorySelector(
+fun DirectorySelectorScreen(
+    modifier: Modifier = Modifier,
     viewModel: AudioPlayerViewModel
 ) {
     val dirs by viewModel.directories.collectAsState()
-    val selectedDirs by viewModel.selectedDirs.collectAsState()
+    val selectedDirs by viewModel.selectedDirsForSetting.collectAsState()
 
-    LazyColumn {
+    LazyColumn(modifier = modifier) {
         items(dirs) { dir ->
             Row(
                 modifier = Modifier

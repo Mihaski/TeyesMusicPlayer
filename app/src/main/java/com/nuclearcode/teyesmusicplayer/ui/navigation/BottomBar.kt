@@ -8,44 +8,42 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation3.runtime.NavBackStack
+import com.nuclearcode.teyesmusicplayer.ui.CategoryHolder
 import com.nuclearcode.teyesmusicplayer.ui.theme.Pink40
 
 @Composable
 fun BottomBar(
     modifier: Modifier = Modifier,
-    navHostController: NavHostController,
-    startDestination: String,
+    backStack: NavBackStack,
 ) {
-    val navBackStackEntry = navHostController.currentBackStackEntryAsState().value
-    val currentRoute = navBackStackEntry?.destination?.route ?: return
+    val current = backStack.lastOrNull() ?: NavigationItems.PlayList
 
     NavigationBar(
         modifier = modifier,
         containerColor = Pink40
     ) {
-        BottomBarItems.bottomBarItems.forEach { item ->
+        listOf(
+            NavigationItems.MainScreen(CategoryHolder.AllCategories),
+            NavigationItems.PlayList,
+            NavigationItems.ReadsFields,
+            NavigationItems.Favorites,
+            NavigationItems.SearchPlaces
+        ).forEach { screen ->
             NavigationBarItem(
-                selected = currentRoute == item.route,
+                selected = current::class == screen::class,
                 onClick = {
-                    if (currentRoute != item.route) {
-                        navHostController.navigate(item.route) {
-                            popUpTo(startDestination) {
-                                saveState = true
-                            }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
+                    // заменяем весь стек новым экраном (чтобы вкладки не наслаивались)
+                    backStack.clear()
+                    backStack.add(screen)
                 },
                 icon = {
                     Icon(
-                        painterResource(item.iconRes),
-                        contentDescription = item.label
+                        painterResource(screen.iconRes),
+                        contentDescription = screen.label
                     )
                 },
-                label = { Text(item.label) },
+                label = { Text(screen.label) },
                 colors = NavigationBarItemDefaults.colors(
 //todo цвета поменять
                 )

@@ -33,9 +33,9 @@ import com.nuclearcode.teyesmusicplayer.ui.AudioFile
 
 @Composable
 @Preview
-private fun TrackPreview() {
+private fun TrackItemAudioListPreview() {
 
-    TrackItem(
+    TrackItemAudioList(
         file = AudioFile(
             "",
             1L,
@@ -47,19 +47,19 @@ private fun TrackPreview() {
             1L,
             null,
         ), isActive = false,
-        isPlaying = false
-    ) { }
+        isPlaying = false,
+        onClick = {}
+    )
 }
-
 @Composable
-fun TrackItem(
+fun TrackItemAudioList(
 //    title: String, todo
 //    artists: String, todo
 //    artists: ByteArray?, todo
     file: AudioFile,
     isActive: Boolean, // текущий выбранный трек
     isPlaying: Boolean, // играет или на паузе
-    onClick:  () -> Unit
+    onClick: () -> Unit
 ) {
     val backgroundColor =
         if (isActive) MaterialTheme.colorScheme.primary.copy(alpha = 0.1f) else Color.Transparent
@@ -72,10 +72,6 @@ fun TrackItem(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-//        val albumArtUri = remember(file.albumId) {
-//            "content://media/external/audio/albumart/${file.albumId}".toUri()
-//        }
-
         if (file.embeddedArt != null) {
             Image(
                 bitmap = BitmapFactory.decodeByteArray(
@@ -116,5 +112,3 @@ fun TrackItem(
         }
     }
 }
-
-

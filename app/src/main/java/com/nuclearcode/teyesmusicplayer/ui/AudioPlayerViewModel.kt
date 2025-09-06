@@ -26,11 +26,13 @@ class AudioPlayerViewModel @Inject constructor(
     val progress: StateFlow<Long> = playerManager.progressFlow
     val duration = playerManager.durationFlow
     val directories = repository.directories
-    private val _selectedDirs = MutableStateFlow<Set<String>>(directories.value.toSet())
-    val selectedDirs: StateFlow<Set<String>> = _selectedDirs
+    private val _selectedDirsForSetting = MutableStateFlow(directories.value.toSet())
+    val selectedDirsForSetting: StateFlow<Set<String>> = _selectedDirsForSetting
+//    private val _selectedDirs = MutableStateFlow(directories.value.toSet())
+//    val selectedDirs: StateFlow<Set<String>> = _selectedDirs
 
     val filteredAudioFiles: StateFlow<List<AudioFile>> =
-        combine(audioFiles, selectedDirs) { allFiles, selected ->
+        combine(audioFiles, selectedDirsForSetting) { allFiles, selected ->
             if (selected.isEmpty()) {
                 allFiles
             } else {
@@ -47,8 +49,9 @@ class AudioPlayerViewModel @Inject constructor(
     fun refreshAudioFiles() {
         repository.loadAudioFiles()
     }
+
     fun toggleDirectory(dir: String) {
-        _selectedDirs.value = _selectedDirs.value.toMutableSet().apply {
+        _selectedDirsForSetting.value = _selectedDirsForSetting.value.toMutableSet().apply {
             if (contains(dir)) remove(dir) else add(dir)
         }
     }

@@ -5,13 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.compose.rememberNavController
+import androidx.media3.common.util.UnstableApi
 import com.nuclearcode.teyesmusicplayer.PlayerApp
 import com.nuclearcode.teyesmusicplayer.ui.navigation.AppNavHost
 import com.nuclearcode.teyesmusicplayer.ui.theme.TeyesMusicPlayerTheme
 import javax.inject.Inject
 import kotlin.getValue
 
+@UnstableApi
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var viewModelFactory: AudioPlayerViewModelFactory
@@ -26,12 +27,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TeyesMusicPlayerTheme {
-                val navController = rememberNavController()
 
                 AppNavHost(
-                    viewModel,
-                    navController,
-                    "play_list"
+                    viewModel
                 )
             }
         }
