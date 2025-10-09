@@ -75,6 +75,9 @@ dependencies {
     //navigation3
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    //room
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
     //delete in future
     implementation(libs.androidx.navigation.compose)
 

@@ -19,6 +19,7 @@ dataStore = "1.1.7"
 navVersion = "2.9.3"
 nav3Core = "1.0.0-alpha07"
 serializationPluginVersion = "2.2.10"
+roomVersion = "2.8.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,9 @@ media3-session = { group = "androidx.media3", name = "media3-session", version.r
 #dagger
 dagger-just = { group = "com.google.dagger", name = "dagger", version.ref = "dagger" }
 dagger-compiler = { group = "com.google.dagger", name = "dagger-compiler", version.ref = "dagger" }
+#room
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "roomVersion" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "roomVersion" }
 #delete in future
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navVersion" }
 
@@ -60,6 +64,7 @@ kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "ko
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 #Added
+room-plugin = { id = "androidx.room", version.ref = "roomVersion" }
 ksp-plugin = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlin-parcelize-plugin = { id = "kotlin-parcelize" }
 serialization-plugin = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "serializationPluginVersion" }

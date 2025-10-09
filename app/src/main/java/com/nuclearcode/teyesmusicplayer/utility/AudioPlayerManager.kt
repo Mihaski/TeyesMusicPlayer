@@ -92,7 +92,7 @@ class AudioPlayerManager @Inject constructor(context: Context) {
             val contentUri = audioFile.contentUri.toUri()
             val mediaItem = MediaItem.Builder()
                 .setUri(contentUri) // лучше сразу хранить ContentUri
-                .setMediaId(audioFile.id.toString())
+                .setMediaId(audioFile.appId.toString())
                 .build()
 
             exoPlayer.setMediaItem(mediaItem)

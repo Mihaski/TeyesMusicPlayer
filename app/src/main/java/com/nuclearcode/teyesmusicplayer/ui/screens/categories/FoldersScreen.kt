@@ -45,6 +45,7 @@ fun FoldersScreen(
                         .background(Color.Cyan)
                         .clickable {
                             onClick()
+                            viewModel.toggleCategoryDir(it)
                         })
             }
         } // lazyC end

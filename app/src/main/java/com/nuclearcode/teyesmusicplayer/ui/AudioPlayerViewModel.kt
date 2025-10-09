@@ -3,6 +3,7 @@ package com.nuclearcode.teyesmusicplayer.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.util.UnstableApi
+import com.nuclearcode.teyesmusicplayer.rpl.FavoriteRepository
 import com.nuclearcode.teyesmusicplayer.utility.AudioPlayerManager
 import com.nuclearcode.teyesmusicplayer.utility.AudioRepository
 import com.nuclearcode.teyesmusicplayer.utility.AudioServiceConnection
@@ -13,12 +14,14 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @UnstableApi
 class AudioPlayerViewModel @Inject constructor(
     private val repository: AudioRepository,
     playerManager: AudioPlayerManager,
     private val serviceConnection: AudioServiceConnection,
+    private val repoFavorite: FavoriteRepository,
 ) : ViewModel() {
     val audioFiles = repository.audioFiles
     val nowPlaying: StateFlow<AudioFile?> = playerManager.nowPlaying
@@ -28,16 +31,35 @@ class AudioPlayerViewModel @Inject constructor(
     val directories = repository.directories
     private val _selectedDirsForSetting = MutableStateFlow(directories.value.toSet())
     val selectedDirsForSetting: StateFlow<Set<String>> = _selectedDirsForSetting
-//    private val _selectedDirs = MutableStateFlow(directories.value.toSet())
-//    val selectedDirs: StateFlow<Set<String>> = _selectedDirs
+    private val _selectedDirsForCategory = MutableStateFlow(directories.value.toSet())
+    val selectedDirsForCategory: StateFlow<Set<String>> = _selectedDirsForCategory
 
-    val filteredAudioFiles: StateFlow<List<AudioFile>> =
-        combine(audioFiles, selectedDirsForSetting) { allFiles, selected ->
-            if (selected.isEmpty()) {
+    val favorites = repoFavorite.getFavorites()
+        .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    fun toggleFavorite(trackId: Long) {
+        viewModelScope.launch {
+            repoFavorite.toggleFavorite(trackId)
+        }
+    }
+
+    suspend fun isFavorite(trackId: Long): Boolean {
+        return repoFavorite.isFavorite(trackId)
+    }
+
+    val filteredAudioFilesForCategory: StateFlow<List<AudioFile>> =
+        combine(
+            audioFiles,
+            selectedDirsForCategory,
+            selectedDirsForSetting
+        ) { allFiles, category, setting ->
+            if (setting.isEmpty()) {
                 allFiles
             } else {
                 allFiles.filter { file ->
-                    file.path.substringBeforeLast("/") in selected
+                    file.path.substringBeforeLast("/") in setting
+                }.filter { fileSet ->
+                    fileSet.path.substringBeforeLast("/") in category
                 }
             }
         }.stateIn(
@@ -46,8 +68,17 @@ class AudioPlayerViewModel @Inject constructor(
             initialValue = emptyList()
         )
 
+    fun toggleCategoryDir(dir: String) {
+        _selectedDirsForCategory.value = mutableSetOf(dir)
+    }
+
     fun refreshAudioFiles() {
         repository.loadAudioFiles()
+    }
+
+    fun resetDirectory() {
+        _selectedDirsForSetting.value = directories.value.toSet()
+        _selectedDirsForCategory.value = directories.value.toSet()
     }
 
     fun toggleDirectory(dir: String) {
@@ -58,7 +89,7 @@ class AudioPlayerViewModel @Inject constructor(
 
     fun play(audioFile: AudioFile) {
         val files = audioFiles.value
-        val startIndex = files.indexOfFirst { it.id == audioFile.id }
+        val startIndex = files.indexOfFirst { it.appId == audioFile.appId }
         if (startIndex != -1) {
             serviceConnection.send(PlaybackCommand.Play(files, startIndex))
         }

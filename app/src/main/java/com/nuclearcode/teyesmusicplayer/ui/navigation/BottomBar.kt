@@ -25,7 +25,7 @@ fun BottomBar(
     ) {
         listOf(
             NavigationItems.MainScreen(CategoryHolder.AllCategories),
-            NavigationItems.PlayList,
+            NavigationItems.PlayList(),
             NavigationItems.ReadsFields,
             NavigationItems.Favorites,
             NavigationItems.SearchPlaces

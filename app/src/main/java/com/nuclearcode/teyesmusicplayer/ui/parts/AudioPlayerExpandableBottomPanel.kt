@@ -44,7 +44,9 @@ fun AudioPlayerExpandableBottomPanelPreview() {
         onPlayPause = { },
         onStop = { },
         onNext = { },
+        isFavorite = false,
         onPrevious = { },
+        onFavorite = { },
     )
 }
 
@@ -64,6 +66,8 @@ fun AudioPlayerExpandableBottomPanel(
     onSeek: (Long) -> Unit,
     onPlayPause: () -> Unit,
     onStop: () -> Unit,
+    isFavorite: Boolean,
+    onFavorite: () -> Unit,
 ) {
     val screenHeightDp = LocalWindowInfo.current.containerSize.height.dp
 
@@ -117,7 +121,8 @@ fun AudioPlayerExpandableBottomPanel(
                     onNext = { onNext() },
                     onPrevious = { onPrevious() },
                     onSeek = { onSeek(it) },
-                    onLike = { }
+                    isFavorite = isFavorite,
+                    onFavorite = { onFavorite() }
                 )
             } else { //Свернутое состояние
                 Row(

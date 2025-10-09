@@ -15,7 +15,7 @@ fun MCategoriesScreen(
     modifier: Modifier = Modifier,
     viewModel: AudioPlayerViewModel
 ) {
-    val filteredTracks by viewModel.filteredAudioFiles.collectAsState()
+//    val filteredTracks by viewModel.filteredAudioFiles.collectAsState()
     val nowPlaying by viewModel.nowPlaying.collectAsState()
     val isPlaying by viewModel.isPlaying.collectAsState()
 

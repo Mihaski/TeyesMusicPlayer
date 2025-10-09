@@ -1,8 +1,6 @@
 package com.nuclearcode.teyesmusicplayer.ui
 
-import androidx.compose.ui.graphics.Color
 import com.nuclearcode.teyesmusicplayer.R
-import com.nuclearcode.teyesmusicplayer.ui.navigation.ColorAsLongSerializer
 import com.nuclearcode.teyesmusicplayer.ui.theme.categoriesColor
 import kotlinx.serialization.Serializable
 

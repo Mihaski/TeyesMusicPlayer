@@ -58,7 +58,8 @@ fun PreviewLandscapePlayerScreen() {
         onNext = { },
         onPrevious = { },
         onSeek = { },
-        onLike = { }
+        isFavorite = false,
+        onFavorite = { }
     )
 }
 
@@ -75,7 +76,8 @@ fun LandscapePlayerScreen(
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onSeek: (Long) -> Unit,
-    onLike: () -> Unit,
+    isFavorite: Boolean,
+    onFavorite: () -> Unit,
 ) {
     val safeDuration = duration.takeIf { it > 0 } ?: 1L
     val safeProgress = progress.coerceIn(0L, safeDuration)
@@ -211,12 +213,20 @@ fun LandscapePlayerScreen(
                     )
                 }
 
-                IconButton(onClick = onLike) {
-                    Icon(
-                        Icons.Default.FavoriteBorder,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
+                IconButton(onClick =  onFavorite ) {
+                    if (isFavorite) {
+                        Icon(
+                            Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                            tint = Color.Blue
+                        )
+                    } else {
+                        Icon(
+                            Icons.Default.FavoriteBorder,
+                            contentDescription = null,
+                            tint = Color.White
+                        )
+                    }
                 }
             }
         } // end of right part

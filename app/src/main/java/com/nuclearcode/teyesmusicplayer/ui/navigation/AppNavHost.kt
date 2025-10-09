@@ -27,7 +27,9 @@ import com.nuclearcode.teyesmusicplayer.utility.PermissionHandler
 fun AppNavHost(
     audioViewModel: AudioPlayerViewModel
 ) {
-    val backStack = rememberNavBackStack(NavigationItems.MainScreen(CategoryHolder.AllCategories))
+    val backStack = rememberNavBackStack(
+        NavigationItems.MainScreen(CategoryHolder.AllCategories)
+    )
     var isExpandedHost by remember { mutableStateOf(false) }
 
     PermissionHandler(
@@ -55,29 +57,56 @@ fun AppNavHost(
             onBack = { backStack.removeLastOrNull() },
             entryProvider =
                 entryProvider {
-                    entry<NavigationItems.MainScreen> {
+                    entry<NavigationItems.MainScreen> { category ->
+                        when (category.categoryHolder) {
+                            CategoryHolder.Albums -> FavoritesScreen()
+                            CategoryHolder.AllTracks -> {
+                                audioViewModel.resetDirectory()
+                                backStack.add(NavigationItems.PlayList("all_tracks"))
+                            } //todo после клика на этот айтем нет предиктив анимации, а на других есть
+                            CategoryHolder.Authors -> FavoritesScreen()
+                            CategoryHolder.Favorites -> backStack.add(NavigationItems.PlayList("favorites"))
 
-                        when (it.categoryHolder) {
-                            CategoryHolder.Albums -> TODO()
-                            CategoryHolder.AllTracks -> TODO()
-                            CategoryHolder.Authors -> TODO()
-                            CategoryHolder.Favorites -> TODO()
+                            //todo вроде чтобы открывать только тот плейлист который отфильтровался надо что то передавать
+                            // сейчас внутри аудиоЛистСкрин фильтрованые треки, можно вытащить их сюда - но как будто не охото, но вью модель тут и так есть как будто можно
+                            // а можно подумать скорее всего передавать не лист аудифайл а категори холдер и от него принимать решения как фильтровать
+
                             CategoryHolder.Folders -> FoldersScreen(viewModel = audioViewModel)
-                            { backStack.add(NavigationItems.PlayList) }
+                            { backStack.add(NavigationItems.PlayList("folders")) }
 
-                            CategoryHolder.Genres -> TODO()
-                            CategoryHolder.Years -> TODO()
+                            CategoryHolder.Genres -> FavoritesScreen()
+                            CategoryHolder.Years -> FavoritesScreen()
                             CategoryHolder.AllCategories -> MainLibraryScreen() { category ->
                                 backStack.add(NavigationItems.MainScreen(category))
                             }
                         }
                     }
-                    entry<NavigationItems.PlayList> {
-                        AudioListScreen(
-                            viewModel = audioViewModel,
-                            isExpandedHost = isExpandedHost,
-                            onExpandChangeHost = { isExpandedHost = it },
-                        )
+                    entry<NavigationItems.PlayList> { filter ->
+                        when (filter.filter) { //todo тут пока не доработан подхват треков пока не могу выделить что то общее, added сделал в других местах если так и останется то можно просто вызывать функцию экрана аудиолист скрин
+                            "favorites" -> AudioListScreen(
+                                viewModel = audioViewModel,
+                                isExpandedHost = isExpandedHost,
+                                onExpandChangeHost = { isExpandedHost = it },
+                            )
+
+                            "folders" -> AudioListScreen(
+                                viewModel = audioViewModel,
+                                isExpandedHost = isExpandedHost,
+                                onExpandChangeHost = { isExpandedHost = it },
+                            )
+
+                            "all_tracks" -> AudioListScreen(
+                                viewModel = audioViewModel,
+                                isExpandedHost = isExpandedHost,
+                                onExpandChangeHost = { isExpandedHost = it },
+                            )
+
+                            "nothing" -> AudioListScreen(
+                                viewModel = audioViewModel,
+                                isExpandedHost = isExpandedHost,
+                                onExpandChangeHost = { isExpandedHost = it },
+                            )
+                        }
                     }
                     entry<NavigationItems.ReadsFields> {
                         FavoritesScreen()

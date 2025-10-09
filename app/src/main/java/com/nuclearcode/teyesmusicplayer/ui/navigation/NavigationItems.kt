@@ -16,7 +16,7 @@ sealed class NavigationItems(
         route = "reads_field",
     )
     @Serializable
-    data object PlayList : NavigationItems(
+    data class PlayList(val filter: String = "nothing") : NavigationItems(
         label = "Плей-лист",
         iconRes = R.drawable.round_playlist_play_24,
         route = "play_list",

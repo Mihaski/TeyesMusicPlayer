@@ -2,12 +2,14 @@ package com.nuclearcode.teyesmusicplayer.ui
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 data class AudioFile(
     val contentUri: String,
-    val embeddedIdLong: Long,
-    val id: Int,
+    val osEmbeddedIdLong: Long,
+    val appId: Int,
     val title: String,
     val artist: String,
     val path: String,
@@ -21,8 +23,8 @@ data class AudioFile(
 
         other as AudioFile
 
-        if (embeddedIdLong != other.embeddedIdLong) return false
-        if (id != other.id) return false
+        if (osEmbeddedIdLong != other.osEmbeddedIdLong) return false
+        if (appId != other.appId) return false
         if (duration != other.duration) return false
         if (albumId != other.albumId) return false
         if (contentUri != other.contentUri) return false
@@ -35,8 +37,8 @@ data class AudioFile(
     }
 
     override fun hashCode(): Int {
-        var result = embeddedIdLong.hashCode()
-        result = 31 * result + id
+        var result = osEmbeddedIdLong.hashCode()
+        result = 31 * result + appId
         result = 31 * result + duration.hashCode()
         result = 31 * result + albumId.hashCode()
         result = 31 * result + contentUri.hashCode()

@@ -55,14 +55,14 @@ fun getAudioFiles(context: Context): List<AudioFile> {
             audioList.add(
                 AudioFile(
                     contentUri = contentUri.toString(),
-                    id = idCounter++,
+                    appId = idCounter++,
                     title = title,
                     artist = artist,
                     path = path,
                     duration = duration,
                     albumId = albumId,
                     embeddedArt = embeddedArt,
-                    embeddedIdLong = id
+                    osEmbeddedIdLong = id
                 )
             )
         }

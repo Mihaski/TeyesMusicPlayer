@@ -19,7 +19,8 @@ private fun PlayerPreview() {
         onNext = {},
         onPrevious = {},
         onSeek = {},
-        onLike = {},
+        isFavorite = false,
+        onFavorite = {},
     )
 }
 
@@ -36,7 +37,8 @@ fun PlayerScreen(
     onNext: () -> Unit,
     onPrevious: () -> Unit,
     onSeek: (Long) -> Unit,
-    onLike: () -> Unit,
+    isFavorite: Boolean,
+    onFavorite: () -> Unit,
 ) {
     if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE) {//horizontal
         LandscapePlayerScreen(
@@ -51,7 +53,8 @@ fun PlayerScreen(
             onNext = { onNext() },
             onPrevious = { onPrevious() },
             onSeek = { onSeek(it) },
-            onLike = { }
+            isFavorite = isFavorite,
+            onFavorite = { onFavorite() }
         )
     } else { // vertical
         PortraitPlayerScreen(
@@ -66,7 +69,8 @@ fun PlayerScreen(
             onNext = { onNext() },
             onPrevious = { onPrevious() },
             onSeek = { onSeek(it) },
-            onLike = { }
+            isFavorite = isFavorite,
+            onFavorite = { onFavorite() }
         )
     }
 }
