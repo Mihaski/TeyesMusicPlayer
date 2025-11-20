@@ -63,7 +63,7 @@ fun AppNavHost(
                             CategoryHolder.AllTracks -> {
                                 audioViewModel.resetDirectory()
                                 backStack.add(NavigationItems.PlayList("all_tracks"))
-                            } //todo после клика на этот айтем нет предиктив анимации, а на других есть
+                            } //todo (после клика на этот айтем) у этого экрана нет предиктив анимации, а на других есть
                             CategoryHolder.Authors -> FavoritesScreen()
                             CategoryHolder.Favorites -> backStack.add(NavigationItems.PlayList("favorites"))
 
